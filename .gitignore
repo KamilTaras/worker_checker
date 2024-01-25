@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.swp
+*.idea/
+*.vscode/
+*.DS_Store
+
+
+my_database.db
