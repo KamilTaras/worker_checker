@@ -3,7 +3,7 @@ import time
 import board
 import neopixel
 
-from config import *  # pylint: disable=unused-wildcard-import
+from utils.config import *  # pylint: disable=unused-wildcard-import
 
 
 def lightGreen():

@@ -3,7 +3,7 @@ from mfrc522 import MFRC522
 import signal
 import time
 
-from config import *  # pylint: disable=unused-wildcard-import
+from utils.config import *  # pylint: disable=unused-wildcard-import
 import RPi.GPIO as GPIO
 import time
 
