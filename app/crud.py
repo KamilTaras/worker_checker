@@ -24,6 +24,11 @@ class WorkerCRUD:
         self.cursor.execute("DELETE FROM WORKER WHERE workerID = ?", (workerID,))
         self.conn.commit()
 
+    def worker_exists(self, workerID):
+        self.cursor.execute("SELECT COUNT(*) FROM WORKER WHERE workerID = ?", (workerID,))
+        result = self.cursor.fetchone()
+        return result[0] > 0
+
 class TimeLogCRUD:
     def __init__(self, conn):
         self.conn = conn
