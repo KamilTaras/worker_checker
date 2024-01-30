@@ -20,7 +20,6 @@ def connect_to_db(db_path):
     
     if not db_exists: # If the database did not exist, create tables
         cursor = conn.cursor()
-        # Create WORKER table
         cursor.execute('''
             CREATE TABLE WORKER (
                 workerID STRING PRIMARY KEY,
@@ -29,7 +28,6 @@ def connect_to_db(db_path):
             )
         ''')
         
-        # Create TIME_LOG table
         cursor.execute('''
             CREATE TABLE TIME_LOG (
                 logID INTEGER PRIMARY KEY,
@@ -40,7 +38,6 @@ def connect_to_db(db_path):
             )
         ''')
         
-        # Commit changes
         conn.commit()
         
     return conn

@@ -1,0 +1,4 @@
+pip install RPi.GPIO
+pip install mfrc522
+pip install adafruit-blinka
+pip install rpi_ws281x adafruit-circuitpython-neopixel
