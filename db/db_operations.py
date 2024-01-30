@@ -45,10 +45,19 @@ class TimeLogCRUD:
                             (workerID, entryTime, exitTime, logID))
         self.conn.commit()
 
+    def get_next_log_id(self):
+        self.cursor.execute("SELECT MAX(logID) FROM TIME_LOG")
+        max_id = self.cursor.fetchone()[0]
+        return max_id + 1 if max_id else 1
+    
     def delete_log(self, logID):
-        self.cursor.execute("DELETE FROM TIME_LOG WHERE logID = ?", (logID,))
-        self.conn.commit()
-
+        try:
+            self.cursor.execute("DELETE FROM TIME_LOG WHERE logID = ?", (logID,))
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"No such id: {e}")
+            return None         
+          
     def read_logs_for_worker(self, workerID):
         try:
             self.cursor.execute("SELECT * FROM TIME_LOG WHERE workerID = ?", (workerID,))

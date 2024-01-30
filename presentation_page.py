@@ -2,6 +2,7 @@
 # This UI will allow the user to create, read, update, and delete worker records
 
 # Reusing the DatabaseConnection and WorkerCRUD class
+import datetime
 from db.db_connection import DatabaseConnection
 from db.db_operations import TimeLogCRUD, WorkerCRUD
 
@@ -100,9 +101,59 @@ def terminal_ui():
     print("Exiting Worker Management System.")
 
 
+def worker_time_tracking(worker_id):
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# Running the terminal UI
+    # Fetch the latest time log for the worker
+    latest_logs = timelog_crud.read_logs_for_worker(worker_id)
+    if latest_logs:
+        latest_log = latest_logs[-1]
+        if latest_log[3] is None:  # Check if the latest log's exit time is empty
+            # Update the log with the current exit time (end the session)
+            timelog_crud.update_log(latest_log[0], worker_id, latest_log[2], current_time)
+            print("Work session ended.")
+            return
+    # Create a new log with the current entry time (start a new session)
+    timelog_crud.create_log(None, worker_id, current_time, None)
+    print("Work session started.")
+
+
+
+
+def check_worker_role(worker_id):
+    worker = worker_crud.read_worker(worker_id)
+    if worker:
+        return worker[2] == 'boss'  # Checking if the role is 'boss'
+    else:
+        return False
+    
+# Running the terminal UI11
+
+# terminal_ui()
+def main_interface():
+    while True:
+        worker_id = input("Enter your worker ID: ")
+
+        # Check if the worker is a boss
+        if check_worker_role(worker_id):
+            # If the worker is a boss, go to the terminal UI for management
+            terminal_ui()
+        else:
+            # Check if the worker exists in the database
+            worker = worker_crud.read_worker(worker_id)
+            if worker:
+                # If the worker is not a boss but exists, go to the time tracking system
+                worker_time_tracking(worker_id)
+            else:
+                # If no such worker exists in the database
+                print("Unauthorized access attempt or worker does not exist.")
+
 terminal_ui()
+# Run the main interface
+main_interface()
+
+# Close the database connection
+db_connection.close()
 
 
 

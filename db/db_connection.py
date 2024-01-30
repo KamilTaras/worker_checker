@@ -31,8 +31,8 @@ class DatabaseConnection:
                 CREATE TABLE TIME_LOG (
                     logID INTEGER PRIMARY KEY,
                     workerID STRING NOT NULL,
-                    entryTime DATETIME NOT NULL,
-                    exitTime DATETIME NOT NULL,
+                    entryTime DATETIME,
+                    exitTime DATETIME,
                     FOREIGN KEY (workerID) REFERENCES WORKER (workerID)
                 )
             ''')
