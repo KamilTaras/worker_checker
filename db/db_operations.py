@@ -1,5 +1,6 @@
-from db.database_worker import connect_to_db
+# database/db_operations.py
 
+import sqlite3
 
 class WorkerCRUD:
     def __init__(self, conn):
@@ -24,6 +25,7 @@ class WorkerCRUD:
         self.cursor.execute("DELETE FROM WORKER WHERE workerID = ?", (workerID,))
         self.conn.commit()
 
+        
 class TimeLogCRUD:
     def __init__(self, conn):
         self.conn = conn
@@ -43,51 +45,23 @@ class TimeLogCRUD:
                             (workerID, entryTime, exitTime, logID))
         self.conn.commit()
 
+    def get_next_log_id(self):
+        self.cursor.execute("SELECT MAX(logID) FROM TIME_LOG")
+        max_id = self.cursor.fetchone()[0]
+        return max_id + 1 if max_id else 1
+    
     def delete_log(self, logID):
-        self.cursor.execute("DELETE FROM TIME_LOG WHERE logID = ?", (logID,))
-        self.conn.commit()
-
+        try:
+            self.cursor.execute("DELETE FROM TIME_LOG WHERE logID = ?", (logID,))
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print(f"No such id: {e}")
+            return None         
+          
     def read_logs_for_worker(self, workerID):
-        self.cursor.execute("SELECT * FROM TIME_LOG WHERE workerID = ?", (workerID,))
-        return self.cursor.fetchall()
-
-
-
-def dbTests():
-    # Example usage
-    database_path = 'my_database.db'
-    conn = connect_to_db(database_path)
-
-    # Create instances of CRUD classes
-    worker_crud = WorkerCRUD(conn)
-    timelog_crud = TimeLogCRUD(conn)
-
-    # Example operations
-    # Create a new worker
-    worker_crud.create_worker('001', 'John Doe', 'Technician')
-
-    # Read worker details
-    print(worker_crud.read_worker('001'))
-
-    # Update worker details
-    worker_crud.update_worker('001', 'Johnathan Doe', 'Senior Technician')
-
-    # Delete a worker
-    worker_crud.delete_worker('001')
-
-    # Create a new log entry
-    timelog_crud.create_log(1, '001', '2024-01-01 08:00:00', '2024-01-01 16:00:00')
-
-    # Read log details
-    print(timelog_crud.read_log(1))
-
-    # Update log details
-    timelog_crud.update_log(1, '001', '2024-01-01 08:30:00', '2024-01-01 16:30:00')
-    timelog_crud.create_log(2, '001', '2024-01-02 08:00:00', '2024-01-02 16:00:00')
-
-    # Delete a log entry
-    timelog_crud.delete_log(1)
-
-    # Close the connection
-    conn.close()
-
+        try:
+            self.cursor.execute("SELECT * FROM TIME_LOG WHERE workerID = ?", (workerID,))
+            return self.cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Error reading logs for worker: {e}")
+            return None
