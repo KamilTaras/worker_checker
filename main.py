@@ -13,6 +13,8 @@ def main():
     # worker_crud.create_worker('001', 'John Doe', 'Technician')
     timelog_crud.read_logs_for_worker('001')
     time_logs = timelog_crud.read_logs_for_worker('001')
+    workers = worker_crud.get_all_workers()
+    print(workers)
     for log in time_logs:
         print(log)
     # TimeLogCRUD.update_log(1, '001', '2024-01-01 08:30:00', '2024-01-01 16:30:00')

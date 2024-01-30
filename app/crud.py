@@ -28,6 +28,10 @@ class WorkerCRUD:
         self.cursor.execute("SELECT COUNT(*) FROM WORKER WHERE workerID = ?", (workerID,))
         result = self.cursor.fetchone()
         return result[0] > 0
+    
+    def get_all_workers(self):
+        self.cursor.execute("SELECT * FROM WORKER")
+        return self.cursor.fetchall()
 
 class TimeLogCRUD:
     def __init__(self, conn):
