@@ -5,7 +5,9 @@
 import datetime
 from db.db_connection import DatabaseConnection
 from db.db_operations import TimeLogCRUD, WorkerCRUD
-
+from utils.buzzer import buzz
+from utils.readingRFID import read_card
+import time
 
 db_connection = DatabaseConnection('my1_database.db')
 db_connection.connect()
@@ -132,7 +134,7 @@ def check_worker_role(worker_id):
 # terminal_ui()
 def main_interface():
     while True:
-        worker_id = input("Enter your worker ID: ")
+        worker_id = read_card()
 
         # Check if the worker is a boss
         if check_worker_role(worker_id):
@@ -140,13 +142,17 @@ def main_interface():
             terminal_ui()
         else:
             # Check if the worker exists in the database
-            worker = worker_crud.read_worker(worker_id)
+            worker = worker_crud.read_worker(worker_id)            
             if worker:
+                buzz(0.2)
+                time.sleep(1)
                 # If the worker is not a boss but exists, go to the time tracking system
                 worker_time_tracking(worker_id)
             else:
+                buzz(0.8)
+                time.sleep(1)
                 # If no such worker exists in the database
-                print("Unauthorized access attempt or worker does not exist.")
+                print("Unauthorized access attempt or worker does not exist.")                
 
 terminal_ui()
 # Run the main interface
